@@ -291,6 +291,8 @@ final class PermissionManager {
 
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+
+            Log.d(PermissionConstants.LOG_TAG, "REACHED ACTIVITY REULT LISTENER ");
             if (alreadyCalled || requestCode != PermissionConstants.PERMISSION_CODE_IGNORE_BATTERY_OPTIMIZATIONS) {
                 return false;
             }

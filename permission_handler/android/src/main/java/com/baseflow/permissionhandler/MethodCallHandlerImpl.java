@@ -70,7 +70,6 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
       handler.setActivityRegistry(activity);
       handler.setPermissionRegistry(activity);
       handler.onMethodCall(calls.get(index), results.get(index));
-      activity.finish();
       handlers.remove(index);
       calls.remove(index);
       results.remove(index);

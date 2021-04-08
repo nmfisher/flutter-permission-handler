@@ -14,14 +14,15 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 
 import android.util.Log;
-
+import java.util.List;
+import java.util.ArrayList;
 
 
 public class FakeActivity extends Activity implements PermissionManager.ActivityRegistry, PermissionManager.PermissionRegistry {
 
     private MethodChannel methodChannel;
     private MethodCallHandlerImpl methodCallHandler;
-
+    private List<PluginRegistry.RequestPermissionsResultListener> _handlers = new ArrayList<PluginRegistry.RequestPermissionsResultListener>();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +34,15 @@ public class FakeActivity extends Activity implements PermissionManager.Activity
     }
 
     public void addListener(PluginRegistry.RequestPermissionsResultListener handler) {
-        // todo - does this need to be wired up somewhere?
+        _handlers.add(handler);
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.d("fake", "got request permissions result");
+        for(PluginRegistry.RequestPermissionsResultListener handler : _handlers) {
+            handler.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        finish();
     }
 
 }
