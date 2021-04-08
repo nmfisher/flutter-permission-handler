@@ -2,6 +2,7 @@ package com.baseflow.permissionhandler;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +14,12 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import com.baseflow.permissionhandler.PermissionManager.ActivityRegistry;
 import com.baseflow.permissionhandler.PermissionManager.PermissionRegistry;
 
+import com.baseflow.permissionhandler.FakeActivity;
+
+import android.util.Log;
+
 import java.util.List;
+import java.util.ArrayList;
 
 final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     private final Context applicationContext;
@@ -55,9 +61,33 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
       this.permissionRegistry = permissionRegistry;
     }
 
-  @Override
+    static List<MethodCallHandlerImpl> handlers = new ArrayList<MethodCallHandlerImpl>();
+    static List<MethodCall> calls = new ArrayList<MethodCall>();
+    static List<Result> results = new ArrayList<Result>();
+    public static void handle(int index, FakeActivity activity) {
+      MethodCallHandlerImpl handler = handlers.get(index);
+      handler.setActivity(activity);
+      handler.setActivityRegistry(activity);
+      handler.setPermissionRegistry(activity);
+      handler.onMethodCall(calls.get(index), results.get(index));
+      activity.finish();
+      handlers.remove(index);
+      calls.remove(index);
+      results.remove(index);
+    }
+
+    @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result)
     {
+      if(activity == null) {
+        Intent intent = new Intent(applicationContext, FakeActivity.class);
+        handlers.add(this);
+        calls.add(call);
+        results.add(result);
+        intent.putExtra("HANDLER_INDEX", handlers.size() - 1);
+        intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+        applicationContext.startActivity(intent);
+      } else {
         switch (call.method) {
             case "checkServiceStatus": {
                 @PermissionConstants.PermissionGroup final int permission = Integer.parseInt(call.arguments.toString());
@@ -128,4 +158,6 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
                 break;
         }
     }
+  }
 }
+

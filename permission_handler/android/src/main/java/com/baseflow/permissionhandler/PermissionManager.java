@@ -80,7 +80,7 @@ final class PermissionManager {
 
         if (activity == null) {
             Log.d(PermissionConstants.LOG_TAG, "Unable to detect current Activity.");
-
+            
             errorCallback.onError(
                     "PermissionHandler.PermissionManager",
                     "Unable to detect current Android Activity.");

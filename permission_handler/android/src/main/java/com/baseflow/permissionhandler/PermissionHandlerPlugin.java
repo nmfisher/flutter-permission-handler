@@ -2,6 +2,8 @@ package com.baseflow.permissionhandler;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.baseflow.permissionhandler.PermissionManager.ActivityRegistry;
@@ -11,6 +13,12 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
+
+import android.util.Log;
+
+import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  * Platform implementation of the permission_handler Flutter plugin.
@@ -69,6 +77,8 @@ public final class PermissionHandlerPlugin implements FlutterPlugin, ActivityAwa
             binding::addActivityResultListener,
             binding::addRequestPermissionsResultListener
         );
+
+        
     }
 
     @Override
@@ -88,6 +98,7 @@ public final class PermissionHandlerPlugin implements FlutterPlugin, ActivityAwa
 
 
     private void startListening(Context applicationContext, BinaryMessenger messenger) {
+        
         methodChannel = new MethodChannel(
             messenger,
             "flutter.baseflow.com/permissions/methods");
